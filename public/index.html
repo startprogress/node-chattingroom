@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>node-chattingroom</title>
+    <link rel="stylesheet" href="stylesheets/main.css">
+</head>
+    <body>
+        <div class="wrapper">
+            <div class="banner">
+                <input type="image" id="exit" src="content/exit.png" />
+                <h1> <font face="Arial" color="#faebd7"> 聊天室 </font> </h1>
+                <span id="status"></span>
+            </div>
+            <div id="historyMsg">
+            </div>
+            <div class="controls" >
+                <div class="items">
+                    <font size="1" color="black">字体颜色</font>
+                    <!--<input id =colorindex" type="button" value="字体颜色" />-->
+                    <input id="colorStyle" type="color" placeHolder='#fff'  title="font color" />
+
+                    <input id="emoji" type="button" value="表情" title="emoji" />
+                    <label for="sendImage" class="imageLable">
+                        <input type="button" value="图片"  />
+                        <input id="sendImage" type="file" value="图片"/>
+                    </label>
+                    <input id="clearBtn" type="button" value="清空记录" title="clear screen" />
+                </div>
+                <textarea id="messageInput" placeHolder="输入"></textarea>
+                <input id="sendBtn" type="button" value="发送">
+                <div id="emojiWrapper">
+                </div>
+            </div>
+        </div>
+        <div id="loginWrapper">
+            <p id="info">连接服务器...</p>
+            <div id="inorup">
+                <button id="signinBtn">登录</button>
+                <button id="signupBtn">注册</button>
+            </div>
+            <div id="signinInfo">
+                <input type="text" placeHolder="用户名" id="nicknameInput" /><br>
+                <input type="text" placeHolder="密码" id="nicknamepsword" /><br>
+                <input type="button" value="确认" id="signin" />
+                <input type="button" value="返回" id="signinreturn" />
+            </div>
+            <div id="signupInfo">
+                <input type="text" placeHolder="用户名" id="createnickname" /><br>
+                <input type="text" placeHolder="密码" id="pswordfirst" /><br>
+                <input type="text" placeHolder="确认密码" id="pswordsecond" /><br>
+                <input type="button" value="确认" id="signup" />
+                <input type="button" value="返回" id="signupreturn" />
+            </div>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="javascripts/hichat.js"></script>
+    </body>
+</html>
