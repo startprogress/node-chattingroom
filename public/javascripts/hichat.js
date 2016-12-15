@@ -65,11 +65,21 @@ Chat.prototype = {
             that._displayNewMsg('system ', msg, 'red');
             document.getElementById('status').textContent = userCount + (userCount > 1 ? ' users' : ' user') + ' online';
         });
+        //收到新消息
         this.socket.on('newMsg', function(user, msg, color) {
             that._displayNewMsg(user, msg, color);
+            var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' :   null;
+            if (document[hiddenProperty]) {
+                document.title = "[新消息]";
+            }
         });
+        //收到新图片
         this.socket.on('newImg', function(user, img, color) {
             that._displayImage(user, img, color);
+            var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' :   null;
+            if (document[hiddenProperty]) {
+                document.title = "[新消息]";
+            }
         });
         // 退出
         document.getElementById('exit').addEventListener('click', function() {
@@ -157,6 +167,21 @@ Chat.prototype = {
                 }
             };
         }, false);
+
+        //页面是否隐藏,如果当前浏览则显示用户名
+        var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' :   null;
+        var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
+// 标签切换操作
+        var onVisibilityChange = function(){
+            if (!document[hiddenProperty]) {
+                document.title=realuser;
+                // console.log("kan");
+            }
+            // else{
+            //     console.log("bukan");
+            // }
+        };
+        document.addEventListener(visibilityChangeEvent, onVisibilityChange);
 
         document.getElementById('sendBtn').addEventListener('click', function() {
             var messageInput = document.getElementById('messageInput'),
