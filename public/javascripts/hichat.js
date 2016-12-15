@@ -65,12 +65,36 @@ Chat.prototype = {
             that._displayNewMsg('system ', msg, 'red');
             document.getElementById('status').textContent = userCount + (userCount > 1 ? ' users' : ' user') + ' online';
         });
+
+        // titleblink,用于document.title的闪烁
+        var titleblink = {
+            time: 0,
+            timer: null,
+            // 显示新消息提示
+            show: function () {
+                // 定时器，设置消息切换频率闪烁效果就此产生
+                titleblink.timer = setTimeout(function () {
+                    titleblink.time++;
+                    titleblink.show();
+                    if (titleblink.time % 2 == 0) {
+                        document.title = "【新消息】" + realuser;
+                    }
+                    else {
+                        document.title = "【　　　】" + realuser;
+                    };
+                }, 100);
+                return [titleblink.timer];
+            },
+            clear: function () {
+                clearTimeout(titleblink.timer);
+            }
+        };
         //收到新消息
         this.socket.on('newMsg', function(user, msg, color) {
             that._displayNewMsg(user, msg, color);
             var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' :   null;
             if (document[hiddenProperty]) {
-                document.title = "[新消息]";
+                titleblink.show();
             }
         });
         //收到新图片
@@ -78,7 +102,7 @@ Chat.prototype = {
             that._displayImage(user, img, color);
             var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' :   null;
             if (document[hiddenProperty]) {
-                document.title = "[新消息]";
+                titleblink.show();
             }
         });
         // 退出
@@ -174,6 +198,7 @@ Chat.prototype = {
 // 标签切换操作
         var onVisibilityChange = function(){
             if (!document[hiddenProperty]) {
+                titleblink.clear();
                 document.title=realuser;
                 // console.log("kan");
             }
