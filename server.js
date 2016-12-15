@@ -47,7 +47,7 @@ io.sockets.on('connection', function(socket) {
             });
         }
     }
-    // no cookie, use login(seperate by type in or up)
+    // no cookie, use login(separated by type in or up)
     socket.on('login', function(nickname, nicknamepsword, type) {
         if (users.indexOf(nickname.trim()) > -1){
             socket.emit('norelogin');
@@ -86,7 +86,7 @@ io.sockets.on('connection', function(socket) {
                     }
                 });
             }
-            // logup
+            // log up
             if (type == 'up'){
                 var querySql = 'INSERT INTO userinfo(userid, psword) VALUES(?,?);';
                 var queryparams = [nickname, nicknamepsword];

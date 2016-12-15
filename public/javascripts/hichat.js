@@ -6,66 +6,12 @@ window.onload = function() {
 var Chat = function() {
     this.socket = null;
 };
+//原型链 函数
 Chat.prototype = {
+    // 初始化
     init: function() {
         var that = this;
         this.socket = io.connect();
-        this.socket.on('connect', function() {
-            document.getElementById('info').textContent = '欢迎';
-            document.getElementById('inorup').style.display = 'block';
-        });
-        // The wrong cases
-        this.socket.on('wrongpsword', function() {
-            document.getElementById('info').textContent = '密码错误，请重新输入';
-        });
-        this.socket.on('mysqlwrong', function() {
-            document.getElementById('info').textContent = '系统维护中，请稍后登录';
-        });
-        this.socket.on('wronguserid', function() {
-            document.getElementById('info').textContent = '用户名不存在，请核实';
-        });
-        this.socket.on('useridexisted', function() {
-            document.getElementById('info').textContent = '用户名已存在，请重新选择用户名';
-        });
-        this.socket.on('norelogin', function() {
-            document.getElementById('info').textContent = '已登录,请勿重复登录!';
-        });
-        // 登录成功
-        this.socket.on('loginSuccess', function(history, nickname) {
-            realuser =  nickname;
-            document.title =  nickname;
-            // 之前没有cookie才加入
-            document.cookie = "name=" + nickname  + ";max-age=" + (60*60*24*7);
-            //登录模块消失，进入聊天，文字输入框获取焦点事件
-            document.getElementById('loginWrapper').style.display = 'none';
-            strs=history.split("\n"); //字符分割
-            var msgtoberead = [];
-            for (i=0;i<strs.length ;i++ )
-            {
-                if (strs[i].indexOf('[未读]') > -1 && strs[i].indexOf(realuser) == -1 ){
-                    msgtoberead.push("<p>" + strs[i] + "</p>");
-                }
-            }
-            toshow = msgtoberead.join('\n');
-            document.getElementById('historyMsg').innerHTML = toshow;
-            document.getElementById('messageInput').focus();
-            tochange =  msgtoberead.join('\n').replace(/<p>/g,'').replace(/<\/p>/g,'');
-            that.socket.emit('updatelog', tochange);
-        });
-        this.socket.on('error', function(err) {
-            if (document.getElementById('loginWrapper').style.display == 'none') {
-                document.getElementById('status').textContent = '无法连接';
-            } else {
-                document.getElementById('info').textContent = '无法连接';
-            }
-        });
-
-        this.socket.on('system', function(nickName, userCount, type) {
-            var msg = nickName + (type == 'login' ? ' joined' : ' left');
-            that._displayNewMsg('system ', msg, 'red');
-            document.getElementById('status').textContent = userCount + (userCount > 1 ? ' users' : ' user') + ' online';
-        });
-
         // titleblink,用于document.title的闪烁
         var titleblink = {
             time: 0,
@@ -89,9 +35,69 @@ Chat.prototype = {
                 clearTimeout(titleblink.timer);
             }
         };
+        // 连接成功的欢迎界面
+        this.socket.on('connect', function() {
+            document.getElementById('info').textContent = '欢迎';
+            document.getElementById('inorup').style.display = 'block';
+        });
+        // 登录失败提示
+        this.socket.on('wrongpsword', function() {
+            document.getElementById('info').textContent = '密码错误，请重新输入';
+        });
+        this.socket.on('mysqlwrong', function() {
+            document.getElementById('info').textContent = '系统维护中，请稍后登录';
+        });
+        this.socket.on('wronguserid', function() {
+            document.getElementById('info').textContent = '用户名不存在，请核实';
+        });
+        this.socket.on('useridexisted', function() {
+            document.getElementById('info').textContent = '用户名已存在，请重新选择用户名';
+        });
+        this.socket.on('norelogin', function() {
+            document.getElementById('info').textContent = '已登录,请勿重复登录!';
+        });
+
+        // 登录成功
+        this.socket.on('loginSuccess', function(history, nickname) {
+            realuser =  nickname;
+            document.title =  nickname;
+            // 之前没有cookie才加入
+            document.cookie = "name=" + nickname  + ";max-age=" + (60*60*24*7);
+            //登录模块消失，进入聊天，文字输入框获取焦点事件
+            document.getElementById('loginWrapper').style.display = 'none';
+            strs=history.split("\n"); //字符分割
+            var msgtoberead = [];
+            for (i=0;i<strs.length ;i++ )
+            {
+                if (strs[i].indexOf('[未读]') > -1 && strs[i].indexOf(realuser) == -1 ){
+                    msgtoberead.push("<p>" + strs[i] + "</p>");
+                }
+            }
+            toshow = msgtoberead.join('\n');
+            document.getElementById('historyMsg').innerHTML = toshow;
+            document.getElementById('messageInput').focus();
+            tochange =  msgtoberead.join('\n').replace(/<p>/g,'').replace(/<\/p>/g,'');
+            that.socket.emit('updatelog', tochange);
+        });
+        // 无法连接
+        this.socket.on('error', function(err) {
+            if (document.getElementById('loginWrapper').style.display == 'none') {
+                document.getElementById('status').textContent = '无法连接';
+            } else {
+                document.getElementById('info').textContent = '无法连接';
+            }
+        });
+        // 系统通知(用户进入或离开)
+        this.socket.on('system', function(nickName, userCount, type) {
+            var msg = nickName + (type == 'login' ? ' joined' : ' left');
+            that._displayNewMsg('system ', msg, 'red');
+            document.getElementById('status').textContent = userCount + (userCount > 1 ? ' users' : ' user') + ' online';
+        });
+
         //收到新消息
         this.socket.on('newMsg', function(user, msg, color) {
             that._displayNewMsg(user, msg, color);
+            //如果当前页面未被浏览
             var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' :   null;
             if (document[hiddenProperty]) {
                 titleblink.show();
@@ -100,11 +106,13 @@ Chat.prototype = {
         //收到新图片
         this.socket.on('newImg', function(user, img, color) {
             that._displayImage(user, img, color);
+            //如果当前页面未被浏览
             var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' :   null;
             if (document[hiddenProperty]) {
                 titleblink.show();
             }
         });
+
         // 退出
         document.getElementById('exit').addEventListener('click', function() {
             //删除cookie
@@ -112,7 +120,8 @@ Chat.prototype = {
             // reload html
             window.location.reload();
         }, false);
-        // 数据库控制登录和注册
+
+        // 登录和注册控制
         document.getElementById('signinBtn').addEventListener('click', function() {
             document.getElementById('inorup').style.display = 'none';
             document.getElementById('signinInfo').style.display = 'block';
@@ -131,6 +140,7 @@ Chat.prototype = {
             document.getElementById('inorup').style.display = 'block';
             document.getElementById('signupInfo').style.display = 'none';
         }, false);
+
         //登录模块逻辑
         document.getElementById('signin').addEventListener('click', function() {
             var nickName = document.getElementById('nicknameInput').value;
@@ -156,6 +166,7 @@ Chat.prototype = {
                 }
             };
         }, false);
+
         //注册模块逻辑
         document.getElementById('signup').addEventListener('click', function() {
             var nickName = document.getElementById('createnickname').value;
@@ -192,7 +203,7 @@ Chat.prototype = {
             };
         }, false);
 
-        //页面是否隐藏,如果当前浏览则显示用户名
+        //判断页面是否当前浏览,如果是,则取消闪烁并强制显示用户名
         var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' :   null;
         var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
 // 标签切换操作
@@ -206,8 +217,10 @@ Chat.prototype = {
             //     console.log("bukan");
             // }
         };
+        //加入页面浏览切换事件
         document.addEventListener(visibilityChangeEvent, onVisibilityChange);
 
+        //发送按钮
         document.getElementById('sendBtn').addEventListener('click', function() {
             var messageInput = document.getElementById('messageInput'),
                 msg = messageInput.value.replace(/\n/g,''),
@@ -251,6 +264,7 @@ Chat.prototype = {
                 reader.readAsDataURL(file);
             };
         }, false);
+        //初始化表情包
         this._initialEmoji();
         document.getElementById('emoji').addEventListener('click', function(e) {
             var emojiwrapper = document.getElementById('emojiWrapper');
@@ -283,6 +297,7 @@ Chat.prototype = {
         };
         emojiContainer.appendChild(docFragment);
     },
+    //显示消息
     _displayNewMsg: function(user, msg, color) {
         var container = document.getElementById('historyMsg'),
             msgToDisplay = document.createElement('p'),
@@ -313,7 +328,7 @@ Chat.prototype = {
             if (emojiIndex > totalEmojiNum) {
                 result = result.replace(match[0], '[X]');
             } else {
-                result = result.replace(match[0], '<img class="emoji" src="../content/emoji/' + emojiIndex + '.gif" />');//todo:fix this in chrome it will cause a new request for the image
+                result = result.replace(match[0], '<img class="emoji" src="../content/emoji/' + emojiIndex + '.gif" />');
             };
         };
         return result;
