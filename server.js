@@ -35,7 +35,7 @@ io.sockets.on('connection', function(socket) {
                                 users.push(testuser);
                                 date = new Date().toLocaleString();
                                 logger.info(testuser + '[IN] at ' + date);
-                                socket.userIndex = users.length;
+                                //socket.userIndex = users.length;
                                 socket.nickname = testuser;
                                 var history = fs.readFileSync("record.txt", "utf-8");
                                 socket.emit('loginSuccess', history, testuser);
@@ -70,7 +70,7 @@ io.sockets.on('connection', function(socket) {
                                         users.push(nickname);
                                         date = new Date().toLocaleString();
                                         logger.info(nickname + '[IN] at ' + date);
-                                        socket.userIndex = users.length;
+                                        //socket.userIndex = users.length;
                                         socket.nickname = nickname;
                                         //chatting record
                                         var history = fs.readFileSync("record.txt", "utf-8");
@@ -110,7 +110,7 @@ io.sockets.on('connection', function(socket) {
                                             users.push(nickname);
                                             date = new Date().toLocaleString( );
                                             logger.info(nickname + '[IN] at ' + date);
-                                            socket.userIndex = users.length;
+                                            //socket.userIndex = users.length;
                                             socket.nickname = nickname;
                                             var history = fs.readFileSync("record.txt","utf-8");
                                             socket.emit('loginSuccess',history, nickname);
@@ -129,7 +129,11 @@ io.sockets.on('connection', function(socket) {
     //user leaves by close the web page, disconnect.
     socket.on('disconnect', function() {
         if (socket.nickname != null) {
-            users.splice(socket.userIndex - 1, 1);
+            for(i=0;i<users.length;i++){
+                if (users[i] === socket.nickname){
+                    users.splice(i, 1);
+                }
+            }
             date = new Date().toLocaleString();
             logger.info(socket.nickname + '[OUT] at' + date);
             socket.broadcast.emit('system', socket.nickname, users.length, 'logout');
