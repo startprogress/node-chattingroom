@@ -132,6 +132,7 @@ io.sockets.on('connection', function(socket) {
             for(i=0;i<users.length;i++){
                 if (users[i] === socket.nickname){
                     users.splice(i, 1);
+                    break;
                 }
             }
             date = new Date().toLocaleString();
