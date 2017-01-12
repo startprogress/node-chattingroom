@@ -34,6 +34,7 @@
 ## 使用(For use)
 * 安装node环境(Install node)
 * git clone https://github.com/startprogress/node-chattingroom.git
+* 用database.sql在MySQL中创建数据库和数据表(Use database.sql to create database and datatable in MySQL)
 * cd node-chattingroom
 * npm install 
 * node server.js
