@@ -16,6 +16,7 @@
 ## 目前实现的功能(Current functions)：
 * 文字，表情，文件的传输功能(word,emoji,file transimmision)。
 * 用户进入，退出的系统广播，总用户数的记录(broadcast of users' in and out)。
+* 新消息提醒(new message reminder)
 * 用数组来记录用户名，防止重复(ID control)。
 * mysql数据库实现用户名管理，提供登录和注册(signin and signup)。
 * 支持未读聊天记录的查看(Unread record)。
