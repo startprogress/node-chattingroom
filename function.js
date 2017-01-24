@@ -91,7 +91,7 @@ module.exports = function(socket) {
                                 socket.emit("mysqlwrong");
                             }else {
                                 if (rows.length != 0){
-                                    socket.emit("useridexisted");
+                                    socket.emit("userisexisted");
                                 }else{
                                     connection.query(querySql, queryparams, function(err, result) {
                                         if (err) {
