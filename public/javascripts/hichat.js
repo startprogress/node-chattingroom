@@ -50,7 +50,7 @@ Chat.prototype = {
         this.socket.on('wronguserid', function() {
             document.getElementById('info').textContent = '用户名不存在，请核实';
         });
-        this.socket.on('useridexisted', function() {
+        this.socket.on('userisexisted', function() {
             document.getElementById('info').textContent = '用户名已存在，请重新选择用户名';
         });
         this.socket.on('norelogin', function() {
