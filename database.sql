@@ -1,4 +1,5 @@
 CREATE DATABASE `user`;
+USE `user`;
 CREATE TABLE `userinfo` (
   `userid` varchar(255) DEFAULT NULL,
   `psword` varchar(255) DEFAULT NULL
