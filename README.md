@@ -1,7 +1,7 @@
 # node-chattingroom
 
 ## 例子(example)
-[聊天室,chattingroom](http://test.andrewzhang.cn/)
+[聊天室,chattingroom](http://123.207.175.208:8008/)
 
 ## 涉及到的技术(related items)
 * node.js
